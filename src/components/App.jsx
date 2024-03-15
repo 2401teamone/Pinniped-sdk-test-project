@@ -1,7 +1,7 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import ErrorPage from "./ErrorPage";
-import Pinniped from "../../../../Pinniped-SDK";
+import Pinniped from "../../../Pinniped-sdk";
 const pnpd = Pinniped("http://localhost:3000");
 const SEALS_ID = "9c589bca-a2b7-41ea-89b7-73e01c002f1d";
 
