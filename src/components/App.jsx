@@ -77,7 +77,8 @@ function App() {
     }
   };
 
-  const createOneHandler = async () => {
+  const createOneHandler = async (e) => {
+    e.preventDefault();
     //Create One
     try {
       const response = await pnpd.db.createOne(SEALS_ID, { type, size });
@@ -89,6 +90,7 @@ function App() {
   };
 
   const updateOneHandler = async (e) => {
+    e.preventDefault();
     //Update One
     try {
       const response = await pnpd.db.updateOne(SEALS_ID, updateSealId, {
@@ -97,23 +99,27 @@ function App() {
       });
       console.log(response.data);
       getAllHandler();
+      clearHandler();
     } catch (error) {
       alert(JSON.stringify(error));
     }
   };
 
-  const deleteOneHandler = async () => {
+  const deleteOneHandler = async (e) => {
+    e.preventDefault();
     //Delete One
     try {
       const response = await pnpd.db.deleteOne(SEALS_ID, updateSealId);
       console.log(response.data);
       getAllHandler();
+      clearHandler();
     } catch (error) {
       alert(JSON.stringify(error));
     }
   };
 
-  const clearHandler = () => {
+  const clearHandler = (e) => {
+    if (e) e.preventDefault();
     setUpdateSealType("");
     setUpdateSealSize("");
     setUpdateSealId("");
