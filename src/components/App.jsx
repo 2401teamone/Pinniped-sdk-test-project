@@ -1,9 +1,10 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import ErrorPage from "./ErrorPage";
-import Pinniped from "../../../Pinniped-sdk";
+import Pinniped from "../../../Pinniped-sdk/src/Pinniped";
+// import Pinniped from "pinniped-sdk";
 const pnpd = Pinniped("http://localhost:3000");
-const SEALS_ID = "9c589bca-a2b7-41ea-89b7-73e01c002f1d";
+const SEALS_ID = "e68e025d-a613-48e5-aa88-ed22dabec754";
 
 function App() {
   const [error, setError] = useState("");
@@ -16,6 +17,16 @@ function App() {
   const [type, setType] = useState("");
   const [size, setSize] = useState("");
 
+  const getAllHandler = async () => {
+    try {
+      const response = await pnpd.db.getAll(SEALS_ID);
+      setSeals(response.data.rows);
+    } catch (error) {
+      console.error(error);
+      setError(error.message);
+    }
+  };
+
   useEffect(() => {
     getAllHandler();
   }, []);
@@ -24,18 +35,7 @@ function App() {
     return <ErrorPage error={error}></ErrorPage>;
   }
 
-  const getAllHandler = async () => {
-    //Get All
-    try {
-      const response = await pnpd.db.getAll(SEALS_ID);
-      setSeals(response.data.rows);
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
   const registerHandler = async () => {
-    //Register User
     try {
       const response = await pnpd.auth.register("test", "password");
       console.log(response.data);
@@ -45,7 +45,6 @@ function App() {
   };
 
   const loginHandler = async () => {
-    //Login User
     try {
       const response = await pnpd.auth.login("test", "password");
       console.log(response.data);
@@ -55,7 +54,6 @@ function App() {
   };
 
   const logoutHandler = async () => {
-    //Logout
     try {
       const response = await pnpd.auth.logout();
       console.log(response.data);
@@ -65,7 +63,6 @@ function App() {
   };
 
   const getOneHandler = async () => {
-    //Get One
     try {
       const response = await pnpd.db.getOne(SEALS_ID, seals[0].id);
       console.log(response.data.row[0]);
