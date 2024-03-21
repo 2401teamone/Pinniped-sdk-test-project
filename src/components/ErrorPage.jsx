@@ -1,4 +1,4 @@
-const ErrorPage = ({ error }) => {
+const ErrorPage = ({ error, loginHander }) => {
   const handleRefresh = () => {
     window.location.reload();
   };
@@ -9,6 +9,7 @@ const ErrorPage = ({ error }) => {
       <p>{error}</p>
       <p>Please try again later.</p>
       <button onClick={handleRefresh}>Refresh</button>
+      <button onClick={loginHander}>Log In Bilbo</button>
     </div>
   );
 };

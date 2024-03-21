@@ -4,7 +4,7 @@ import ErrorPage from "./ErrorPage";
 import Pinniped from "../../../Pinniped-sdk/src/Pinniped";
 // import Pinniped from "pinniped-sdk";
 const pnpd = Pinniped("http://localhost:3000");
-const SEALS_ID = "e68e025d-a613-48e5-aa88-ed22dabec754";
+const SEALS_ID = "a49e125a8fa57f";
 
 function App() {
   const [error, setError] = useState("");
@@ -17,10 +17,17 @@ function App() {
   const [type, setType] = useState("");
   const [size, setSize] = useState("");
 
+  const [user, setUser] = useState("");
+
   const getAllHandler = async () => {
     try {
+      //Get all rows from the seals table
       const response = await pnpd.db.getAll(SEALS_ID);
       setSeals(response.data.rows);
+
+      //get current user
+      const userResponse = await pnpd.auth.session();
+      if (userResponse.data.user) setUser(userResponse.data.user.username);
     } catch (error) {
       console.error(error);
       setError(error.message);
@@ -29,11 +36,7 @@ function App() {
 
   useEffect(() => {
     getAllHandler();
-  }, []);
-
-  if (error) {
-    return <ErrorPage error={error}></ErrorPage>;
-  }
+  }, [user]);
 
   const registerHandler = async () => {
     try {
@@ -44,9 +47,24 @@ function App() {
     }
   };
 
-  const loginHandler = async () => {
+  const loginHandlerFrodo = async () => {
     try {
-      const response = await pnpd.auth.login("test", "password");
+      const response = await pnpd.auth.login("frodo", "password");
+
+      setUser(response.data.user.username);
+
+      console.log(response.data);
+    } catch (error) {
+      alert(JSON.stringify(error));
+    }
+  };
+
+  const loginHandlerBilbo = async () => {
+    try {
+      const response = await pnpd.auth.login("bilbo", "password");
+
+      setUser(response.data.user.username);
+
       console.log(response.data);
     } catch (error) {
       alert(JSON.stringify(error));
@@ -56,6 +74,9 @@ function App() {
   const logoutHandler = async () => {
     try {
       const response = await pnpd.auth.logout();
+
+      setUser("");
+
       console.log(response.data);
     } catch (error) {
       alert(JSON.stringify(error));
@@ -132,20 +153,29 @@ function App() {
     //Session
     try {
       const response = await pnpd.auth.session();
+
+      setUser(response.data.user.username);
+
       console.log(response.data);
     } catch (error) {
       alert(JSON.stringify(error));
     }
   };
 
+  if (error) {
+    return (
+      <ErrorPage error={error} loginHander={loginHandlerBilbo}></ErrorPage>
+    );
+  }
+
   return (
     <div>
       <h2>Seal Management</h2>
+      <h3>User: {user}</h3>
 
-      <button onClick={registerHandler}>Register</button>
-      <button onClick={loginHandler}>Login</button>
+      <button onClick={loginHandlerFrodo}>Login Frodo</button>
+      <button onClick={loginHandlerBilbo}>Login Bilbo</button>
       <button onClick={logoutHandler}>Logout</button>
-      <button onClick={sessionHandler}>Log Session</button>
       <button onClick={getOneHandler}>Get a random Seal</button>
 
       {updateSealId && (
@@ -183,7 +213,8 @@ function App() {
           return (
             <div key={seal.id}>
               <span>
-                Type: {seal.type} | Size: {seal.size}{" "}
+                Type: {seal.type} | Size: {seal.size} | Creator:{" "}
+                {seal.creatorId}
               </span>
               <button onClick={() => selectHandler(seal)}>Select</button>
             </div>
