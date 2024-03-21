@@ -26,7 +26,7 @@ function App() {
       setSeals(response.data.rows);
 
       //get current user
-      const userResponse = await pnpd.auth.session();
+      const userResponse = await pnpd.auth.getUser();
       if (userResponse.data.user) setUser(userResponse.data.user.username);
     } catch (error) {
       console.error(error);
@@ -152,7 +152,7 @@ function App() {
   const sessionHandler = async () => {
     //Session
     try {
-      const response = await pnpd.auth.session();
+      const response = await pnpd.auth.getUser();
 
       setUser(response.data.user.username);
 
